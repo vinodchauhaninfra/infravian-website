@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InfraVian Technologies Ltd. | Enterprise IT Infrastructure & AI Solutions</title>
+  
+  <!-- FAVICON -->
+  <link rel="icon" type="image/png" href="logo.png">
+  
+  <script>
+    // AUTO BANNER SLIDER
+    const slides = [
+      {
+        title: "Best IT Services and<br>Solution Provider in India",
+        bg: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        title: "30+ Years of Enterprise<br>IT Expertise",
+        bg: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        title: "Secure, Scalable, Always-On IT<br>for Modern Businesses",
+        bg: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&q=80"
+      }
+    ];
+
+    let currentSlide = 0;
+
+    function renderSlide() {
+      const heroEl = document.getElementById('heroBanner');
+      const titleEl = document.getElementById('heroTitle');
+      if (heroEl && titleEl) {
+        heroEl.style.backgroundImage = `linear-gradient(rgba(8, 20, 37, 0.84), rgba(8, 20, 37, 0.92)), url('${slides[currentSlide].bg}')`;
+        titleEl.innerHTML = slides[currentSlide].title;
+      }
+    }
+
+    function changeSlide(direction) {
+      currentSlide = (currentSlide + direction + slides.length) % slides.length;
+      renderSlide();
+    }
+
+    setInterval(function() {
+      changeSlide(1);
+    }, 4000);
+
+    function toggleACMA() {
+      var menu = document.getElementById('acmaMenu');
+      if (menu) {
+        menu.classList.toggle('open');
+      }
+    }
+
+    function hoverCat(subId, rowEl) {
+      var panes = document.querySelectorAll('.sub-pane');
+      panes.forEach(function(p) { p.classList.remove('visible'); });
+      
+      var targetPane = document.getElementById(subId);
+      if (targetPane) targetPane.classList.add('visible');
+
+      var rows = document.querySelectorAll('.cat-row');
+      rows.forEach(function(r) { r.classList.remove('active'); });
+      if (rowEl) rowEl.classList.add('active');
+    }
+
+    function showView(viewId) {
+      var views = document.querySelectorAll('.view-panel');
+      views.forEach(function(v) { v.classList.remove('active'); });
+      var target = document.getElementById(viewId);
+      if (target) target.classList.add('active');
+      var menu = document.getElementById('acmaMenu');
+      if (menu) menu.classList.remove('open');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openService(viewId) {
+      showView(viewId);
+    }
+
+    // MODAL APPOINTMENT FUNCTIONS
+    function openModal(serviceName) {
+      var modal = document.getElementById('appointmentModal');
+      var field = document.getElementById('modalServiceField');
+      if (serviceName && field) {
+        field.value = serviceName;
+      }
+      if (modal) {
+        modal.classList.add('open');
+      }
+    }
+
+    function closeModal() {
+      var modal = document.getElementById('appointmentModal');
+      if (modal) {
+        modal.classList.remove('open');
+      }
+    }
+
+    // REAL-TIME INTERNET AI + VOICE FUNCTIONS
+    function toggleAIChat() {
+      var chatBox = document.getElementById('aiChatPopup');
+      if (chatBox) {
+        chatBox.classList.toggle('open');
+      }
+    }
+
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function startVoiceRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Voice recognition is not supported in this browser. Please use Google Chrome or Edge.");
+        return;
+      }
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      const micBtn = document.getElementById('aiMicBtn');
+      micBtn.style.background = '#e62837';
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('aiUserInput').value = transcript;
+        micBtn.style.background = '#0072ce';
+        sendAIMessage(new Event('submit'));
+      };
+
+      recognition.onerror = function() {
+        micBtn.style.background = '#0072ce';
+      };
+
+      recognition.onend = function() {
+        micBtn.style.background = '#0072ce';
+      };
+
+      recognition.start();
+    }
+
+    async function sendAIMessage(e) {
+      if (e) e.preventDefault();
+      var input = document.getElementById('aiUserInput');
+      var msg = input.value.trim();
+      if (!msg) return;
+
+      var msgArea = document.getElementById('aiMessagesArea');
+      
+      var userBubble = document.createElement('div');
+      userBubble.className = 'ai-msg user-msg';
+      userBubble.innerText = msg;
+      msgArea.appendChild(userBubble);
+      input.value = '';
+      msgArea.scrollTop = msgArea.scrollHeight;
+
+      var botBubble = document.createElement('div');
+      botBubble.className = 'ai-msg bot-msg';
+      botBubble.innerText = "Thinking & Connecting with Live Server...";
+      msgArea.appendChild(botBubble);
+      msgArea.scrollTop = msgArea.scrollHeight;
+
+      try {
+        var systemContext = "You are the advanced official AI Assistant for InfraVian Technologies Ltd., Navi Mumbai, India. Contact: +91 97932 28607, email: contact@infravian.in. We offer enterprise IT Infrastructure, Data Centers, AI & Automation, Cloud, CCTV, Networking, VAPT, and Hardware Rentals. Give smart, direct, concise solutions. Question: " + msg;
+        
+        var response = await fetch("https://text.pollinations.ai/" + encodeURIComponent(systemContext));
+        var replyText = await response.text();
+        
+        if (!replyText || replyText.trim() === "") {
+          replyText = "InfraVian Technologies provides complete enterprise IT & AI automation. Reach us at contact@infravian.in or call +91 97932 28607.";
+        }
+
+        botBubble.innerHTML = replyText + `<br><button onclick="speakText('${replyText.replace(/'/g, "\\'")}')" style="background:none;border:none;cursor:pointer;font-size:0.8rem;color:#0072ce;margin-top:6px;font-weight:700;"> Listen Voice</button>`;
+        speakText(replyText);
+      } catch (err) {
+        botBubble.innerText = "InfraVian Technologies is ready to assist your business. Please call our lead engineers directly at +91 97932 28607 or email contact@infravian.in.";
+      }
+
+      msgArea.scrollTop = msgArea.scrollHeight;
+    }
+
+    window.addEventListener('click', function(e) {
+      var btn = document.getElementById('offeringsTrigger');
+      var menu = document.getElementById('acmaMenu');
+      if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.remove('open');
+      }
+
+      var modal = document.getElementById('appointmentModal');
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+  </script>
+
+  <style>
+    :root {
+      --primary: #0a192f;
+      --brand-blue: #0072ce;
+      --brand-green: #00b060;
+      --brand-green-light: #20d077;
+      --accent-red: #e62837;
+      --text: #334155;
+      --heading: #1e293b;
+      --border: #e2e8f0;
+      --white: #ffffff;
+      --bg-light: #f8fafc;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
+    body { background: var(--white); color: var(--text); line-height: 1.6; }
+
+    header { 
+      position: sticky; 
+      top: 0; 
+      z-index: 1000; 
+      background: var(--white); 
+      border-bottom: 1px solid #edf2f7; 
+      padding: 0.75rem 5%; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      box-shadow: 0 4px 18px rgba(0,0,0,0.04); 
+    }
+    
+    .brand-wrap { 
+      display: flex; 
+      align-items: center; 
+      gap: 16px; 
+      cursor: pointer; 
+      text-decoration: none; 
+    }
+    
+    .brand-logo-img { 
+      height: 52px; 
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+    
+    nav { display: flex; align-items: center; gap: 1.1rem; }
+    
+    .nav-home-btn { 
+      background: none; 
+      border: none; 
+      font-size: 0.92rem; 
+      font-weight: 800; 
+      color: #111827; 
+      cursor: pointer; 
+      padding: 0.4rem 0.6rem; 
+      text-transform: uppercase; 
+      letter-spacing: 0.3px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .nav-home-btn:hover { color: var(--brand-blue); }
+
+    .offerings-container { position: relative; }
+    .offerings-black-btn { 
+      background: #08111d; 
+      color: #ffffff; 
+      border: 1px solid rgba(32, 208, 119, 0.4); 
+      font-size: 0.8rem; 
+      font-weight: 800; 
+      padding: 0.62rem 1.45rem; 
+      border-radius: 50px; 
+      cursor: pointer; 
+      text-transform: uppercase; 
+      letter-spacing: 0.4px;
+      display: flex; 
+      align-items: center; 
+      gap: 6px; 
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      transition: all 0.2s ease;
+    }
+    .offerings-black-btn:hover {
+      border-color: var(--brand-green);
+      transform: translateY(-1px);
+    }
+
+    .nav-contact-pill {
+      background: var(--accent-red);
+      color: #ffffff;
+      border: none;
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 0.62rem 1.55rem;
+      border-radius: 50px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 4px 12px rgba(230, 40, 55, 0.3);
+      transition: all 0.2s ease;
+    }
+    .nav-contact-pill:hover {
+      background: #c81826;
+      transform: translateY(-1px);
+    }
+
+    .acma-menu-wrap {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--brand-green);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+      z-index: 1001;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .acma-menu-wrap.open { display: flex; }
+
+    .flyout-left-pane { width: 330px; background: #ffffff; border-right: 1px solid var(--border); padding: 0.6rem 0; max-height: 80vh; overflow-y: auto; }
+    .sub-pane { display: none; }
+    .sub-pane.visible { display: block; }
+    .sub-pane a { display: block; padding: 0.65rem 1.3rem; color: #475569; font-size: 0.86rem; font-weight: 600; text-decoration: none; border-bottom: 1px dashed #f1f5f9; cursor: pointer; transition: 0.15s; }
+    .sub-pane a:hover { background: #f8fafc; color: var(--brand-green); padding-left: 1.55rem; }
+
+    .main-cat-column { width: 290px; background: #ffffff; padding: 0.4rem 0; max-height: 80vh; overflow-y: auto; }
+    .cat-row { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1.3rem; font-size: 0.87rem; font-weight: 700; color: #1e293b; cursor: pointer; border-bottom: 1px solid #f8fafc; }
+    .cat-row:hover, .cat-row.active { background: #f8fafc; color: var(--brand-blue); border-left: 3px solid var(--brand-green); }
+    .cat-arrow { font-size: 0.8rem; color: #94a3b8; }
+
+    .btn-red { background: var(--accent-red); color: var(--white); border: none; font-size: 0.85rem; font-weight: 800; padding: 0.75rem 1.9rem; border-radius: 50px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; text-decoration: none; transition: 0.2s; box-shadow: 0 4px 12px rgba(230, 40, 55, 0.28); }
+    .btn-red:hover { background: #c81826; transform: translateY(-1px); }
+    
+    .btn-green { background: var(--brand-green); color: #062817; border: none; font-size: 0.85rem; font-weight: 800; padding: 0.75rem 1.9rem; border-radius: 50px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; text-decoration: none; transition: 0.2s; box-shadow: 0 4px 12px rgba(0, 176, 96, 0.25); }
+    .btn-green:hover { background: var(--brand-green-light); color: #000; transform: translateY(-1px); }
+
+    .view-panel { display: none; }
+    .view-panel.active { display: block; }
+
+    .skyline-hero {
+      position: relative;
+      min-height: 86vh;
+      background: linear-gradient(rgba(8, 20, 37, 0.84), rgba(8, 20, 37, 0.92)),
+                  url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 10%;
+      color: #ffffff;
+      transition: background-image 0.8s ease-in-out;
+    }
+
+    .hero-slider-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2.2rem;
+      color: rgba(255,255,255,0.4);
+      cursor: pointer;
+      user-select: none;
+      padding: 1rem;
+      transition: color 0.2s;
+    }
+    .hero-slider-arrow:hover { color: var(--brand-green); }
+    .arrow-left { left: 15px; }
+    .arrow-right { right: 15px; }
+
+    .skyline-hero h1 {
+      font-size: 2.85rem;
+      font-weight: 900;
+      max-width: 820px;
+      line-height: 1.25;
+      margin-bottom: 2rem;
+      letter-spacing: -0.5px;
+      min-height: 3.8em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-btn-group { display: flex; gap: 1.2rem; justify-content: center; align-items: center; }
+
+    .trusted-heading-bar { background: #f1f5f9; text-align: center; padding: 1.8rem 6% 1.2rem; border-bottom: 1px solid #e2e8f0; }
+    .trusted-heading-bar h2 { font-size: 1.85rem; font-weight: 700; color: #1e293b; letter-spacing: -0.3px; }
+
+    .home-stats-bar {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      padding: 2.2rem 6%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      text-align: center;
+    }
+    .stat-card { border-top: 3px solid var(--brand-green); padding-top: 1rem; }
+    .stat-card h3 { font-size: 2.4rem; font-weight: 800; color: var(--accent-red); margin-bottom: 0.2rem; }
+    .stat-card p { font-size: 0.88rem; color: #64748b; font-weight: 700; }
+
+    .sbu-wrap { padding: 3.5rem 8% 4.5rem; text-align: center; background: #ffffff; }
+    .sbu-title { font-size: 1.85rem; font-weight: 700; color: #1e293b; margin-bottom: 2.8rem; position: relative; display: inline-block; }
+    .sbu-title::after { content: ''; position: absolute; width: 50px; height: 3px; background: var(--brand-green); bottom: -10px; left: 50%; transform: translateX(-50%); }
+
+    .sbu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.4rem; margin-bottom: 2rem; }
+    .sbu-card {
+      position: relative;
+      height: 260px;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-end;
+      padding: 1.3rem;
+      text-align: left;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      background-size: cover;
+      background-position: center;
+      transition: all 0.25s ease;
+      border-bottom: 4px solid transparent;
+    }
+    .sbu-card:hover { transform: translateY(-5px); border-bottom-color: var(--brand-green); }
+    .sbu-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 65%, rgba(0,0,0,0.05) 100%); z-index: 1; }
+    .sbu-card h4 { position: relative; z-index: 2; color: #ffffff; font-size: 1.05rem; font-weight: 700; line-height: 1.35; }
+
+    .page-section { padding: 3.8rem 7% 4.2rem; background: var(--white); }
+    .service-banner { color:#fff; text-align:center; padding: 4.8rem 6%; border-bottom: 3px solid var(--brand-green); background-size: cover; background-position: center; }
+    .service-banner h1 { font-size: 2.3rem; font-weight: 900; letter-spacing: -0.5px; text-transform: uppercase; }
+
+    /* EXECUTIVE SERVICE LAYOUT SYSTEM */
+    .service-detail-row { display: flex; flex-wrap: wrap; gap: 3.5rem; align-items: flex-start; margin-bottom: 3.5rem; }
+    .service-img-col { flex: 1 1 400px; max-width: 520px; }
+    .service-img-col img { width: 100%; border-radius: 8px; display: block; box-shadow: 0 10px 30px rgba(0,0,0,0.12); border-top: 4px solid var(--brand-green); }
+    .service-text-col { flex: 1 1 480px; }
+    .service-h2 { font-size: 2.1rem; font-weight: 900; color: #1e293b; line-height: 1.25; margin-bottom: 0.6rem; }
+    .service-subtitle { font-size: 1.08rem; font-weight: 700; color: var(--brand-blue); margin-bottom: 1.2rem; }
+    .service-p { font-size: 0.95rem; color: #475569; line-height: 1.75; margin-bottom: 1.2rem; }
+    
+    .tech-pill-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.55rem 1.4rem; margin: 1.6rem 0 2.2rem; list-style: none; }
+    .tech-pill-grid li { font-size: 0.9rem; font-weight: 600; color: #334155; position: relative; padding-left: 20px; line-height: 1.4; }
+    .tech-pill-grid li::before { content: "•"; position: absolute; left: 0; color: var(--accent-red); font-size: 1.3rem; line-height: 1; top: -1px; }
+
+    .direct-call-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid var(--brand-blue);
+      padding: 0.65rem 1.2rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-left: 1rem;
+      vertical-align: middle;
+      text-decoration: none;
+    }
+    .direct-call-badge:hover { background: #dbeafe; }
+
+    .section-headline { text-align: center; font-size: 1.8rem; font-weight: 800; color: #1e293b; margin: 3.8rem 0 2.2rem; text-transform: uppercase; letter-spacing: 0.4px; }
+
+    .benefit-cards-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; margin-bottom: 3.5rem; }
+    .benefit-card-unit { background: #ffffff; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
+    .benefit-card-header { padding: 1.2rem 1.4rem; color: #ffffff; font-weight: 800; font-size: 0.98rem; text-align: center; letter-spacing: 0.3px; }
+    .bg-red-accent { background: var(--accent-red); }
+    .bg-slate-gray { background: #475569; }
+    .benefit-card-desc { padding: 1.4rem; font-size: 0.89rem; color: #475569; line-height: 1.65; }
+
+    .framework-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.8rem; margin-top: 1.8rem; }
+    .framework-box { background: var(--bg-light); border: 1px solid var(--border); border-top: 3px solid var(--brand-green); padding: 2.2rem 1.8rem; border-radius: 6px; text-align: center; transition: transform 0.2s; }
+    .framework-box:hover { transform: translateY(-3px); }
+    .framework-icon { font-size: 2.3rem; margin-bottom: 0.8rem; display: block; }
+    .framework-box h4 { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 0.6rem; }
+    .framework-box p { font-size: 0.88rem; color: #64748b; line-height: 1.65; }
+
+    .consult-bar { background: linear-gradient(rgba(13, 27, 42, 0.92), rgba(13, 27, 42, 0.95)), url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80') center/cover; padding: 2.2rem 8%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; border-top: 3px solid var(--brand-green); }
+    .consult-bar h3 { font-size: 1.45rem; font-weight: 800; color: #ffffff; }
+    .consult-bar p { color: #cbd5e1; font-size: 0.9rem; }
+
+    footer { background: #09131f; color: #94a3b8; padding: 3.5rem 8% 2rem; border-top: 4px solid var(--brand-green); }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2.5rem; margin-bottom: 2.5rem; }
+    .footer-col h4 { color: #fff; font-size: 0.95rem; margin-bottom: 1rem; letter-spacing: 0.5px; border-left: 3px solid var(--brand-green); padding-left: 8px; text-transform: uppercase; }
+    .footer-col p, .footer-col li { font-size: 0.86rem; line-height: 1.8; list-style: none; }
+    .footer-col a { color: #94a3b8; text-decoration: none; cursor: pointer; transition: 0.2s; display: inline-block; }
+    .footer-col a:hover { color: var(--brand-green); padding-left: 4px; }
+    .footer-bottom { border-top: 1px solid #1e293b; padding-top: 1.5rem; text-align: center; font-size: 0.8rem; color: #64748b; }
+
+    /* FLOATING BUTTONS */
+    .floating-wa-box { position: fixed; bottom: 20px; right: 15px; display: flex; flex-direction: column; align-items: flex-end; z-index: 1000; text-decoration: none; }
+    .wa-circle { background: #25d366; color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
+
+    .floating-ai-btn {
+      position: fixed;
+      bottom: 80px;
+      right: 15px;
+      background: linear-gradient(135deg, #0072ce, #00b060);
+      color: white;
+      padding: 0.65rem 1.15rem;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 6px 18px rgba(0, 114, 206, 0.4);
+      border: 1px solid rgba(255,255,255,0.4);
+      transition: all 0.25s ease;
+    }
+    .floating-ai-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0, 176, 96, 0.5); }
+
+    /* AI CHAT POPUP WIDGET (WITH MIC & AUDIO SPEECH) */
+    .ai-chat-popup {
+      display: none;
+      position: fixed;
+      bottom: 140px;
+      right: 20px;
+      width: 350px;
+      height: 480px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+      border: 1px solid var(--border);
+      z-index: 10000;
+      flex-direction: column;
+      overflow: hidden;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+    .ai-chat-popup.open { display: flex; }
+    .ai-chat-header {
+      background: #08111d;
+      color: #ffffff;
+      padding: 0.85rem 1.1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--brand-green);
+    }
+    .ai-chat-header h4 { font-size: 0.92rem; display: flex; align-items: center; gap: 6px; }
+    .ai-chat-close { background: none; border: none; color: #94a3b8; font-size: 1.3rem; cursor: pointer; }
+    .ai-chat-messages { flex: 1; padding: 1rem; overflow-y: auto; background: #f8fafc; display: flex; flex-direction: column; gap: 0.75rem; }
+    .ai-msg { padding: 0.65rem 0.9rem; border-radius: 8px; font-size: 0.85rem; max-width: 85%; line-height: 1.45; }
+    .bot-msg { background: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; align-self: flex-start; }
+    .user-msg { background: var(--brand-blue); color: #ffffff; align-self: flex-end; }
+    .ai-chat-form { display: flex; padding: 0.6rem; border-top: 1px solid #e2e8f0; background: #ffffff; gap: 6px; align-items: center; }
+    .ai-chat-form input { flex: 1; border: 1px solid #cbd5e1; padding: 0.6rem 0.8rem; border-radius: 4px; outline: none; font-size: 0.85rem; }
+    .ai-mic-btn { background: var(--brand-blue); color: white; border: none; width: 36px; height: 36px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+    .ai-send-btn { background: var(--brand-green); color: white; border: none; padding: 0.6rem 0.9rem; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+    /* MODAL POPUP */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 25, 47, 0.75);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 440px;
+      border-radius: 6px;
+      padding: 2.2rem 2rem;
+      position: relative;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      animation: modalFadeIn 0.25s ease-out;
+    }
+    @keyframes modalFadeIn {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      color: #94a3b8;
+      cursor: pointer;
+    }
+    .modal-close-btn:hover { color: #0f172a; }
+    .modal-box input, .modal-box textarea {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      color: #1e293b;
+      outline: none;
+      background: #fdfdfd;
+      font-family: inherit;
+    }
+    .modal-box input:focus, .modal-box textarea:focus {
+      border-color: var(--accent-red);
+      background: #ffffff;
+    }
+    .modal-submit-btn {
+      background: #e62837;
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-block;
+      transition: background 0.2s;
+    }
+    .modal-submit-btn:hover { background: #c81826; }
+
+    @media (max-width: 900px) {
+      header { flex-direction: column; gap: 1rem; text-align: center; }
+      .brand-wrap { justify-content: center; }
+      .skyline-hero h1 { font-size: 1.9rem; }
+      .home-stats-bar { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+      .sbu-grid { grid-template-columns: repeat(2, 1fr); }
+      .benefit-cards-trio, .framework-grid { grid-template-columns: 1fr; }
+      .tech-pill-grid { grid-template-columns: 1fr; }
+      .direct-call-badge { display: block; margin: 1rem 0 0 0; text-align: center; }
+      .acma-menu-wrap { width: 92vw; flex-direction: column; right: -10px; }
+      .flyout-left-pane, .main-cat-column { width: 100%; border: none; }
+      .consult-bar { flex-direction: column; text-align: center; }
+      .ai-chat-popup { width: 92vw; right: 4vw; bottom: 140px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <a href="index.html" class="brand-wrap">
+      <img src="logo.png" alt="InfraVian Logo" class="brand-logo-img">
+    </a>
+
+    <nav>
+      <a href="index.html" class="nav-home-btn">HOME</a>
+
+      <div class="offerings-container">
+        <button class="offerings-black-btn" id="offeringsTrigger" onclick="toggleACMA()">
+          INFRAVIAN'S OFFERINGS 
+        </button>
+
+        <div class="acma-menu-wrap" id="acmaMenu">
+          <div class="flyout-left-pane">
+            <!--  AI & AUTOMATION SUB-PANE -->
+            <div class="sub-pane visible" id="sub-ai">
+              <a onclick="openService('view-ai-enterprise')">Enterprise AI & Automation</a>
+              <a onclick="openService('view-ai-aiops')">AIOps & Smart IT Operations</a>
+              <a onclick="openService('view-ai-vision')">AI Video Analytics</a>
+              <a onclick="openService('view-ai-llm')">Custom AI Assistant & LLM Integration</a>
+            </div>
+
+            <div class="sub-pane" id="sub-infra">
+              <a onclick="openService('view-endpoint')">Endpoints</a>
+              <a onclick="openService('view-datacenter')">Data Center</a>
+              <a onclick="openService('view-networking')">Networking & WiFi</a>
+              <a onclick="openService('view-backup')">Backup & Disaster Recovery</a>
+              <a onclick="openService('view-loadbalancer')">Load Balancers & WAN</a>
+            </div>
+
+            <div class="sub-pane" id="sub-services">
+              <a onclick="openService('view-staffing')">IT Staffing Services</a>
+              <a onclick="openService('view-ondemand')">On-Demand Services</a>
+              <a onclick="openService('view-audit')">IT Audit Services</a>
+              <a onclick="openService('view-cctvamc')">CCTV AMC</a>
+              <a onclick="openService('view-cloudservices')">Cloud Services</a>
+              <a onclick="openService('view-dcmanage')">Data Center Management Services</a>
+              <a onclick="openService('view-rims')">Remote Infrastructure Management Services</a>
+            </div>
+
+            <div class="sub-pane" id="sub-system">
+              <a onclick="openService('view-newoffice')">New Office IT Setup</a>
+              <a onclick="openService('view-turnkey')">Turnkey Projects</a>
+            </div>
+
+            <div class="sub-pane" id="sub-security">
+              <a onclick="openService('view-vapt')">VAPT Services</a>
+              <a onclick="openService('view-itsecurity')">IT Security Services</a>
+            </div>
+
+            <div class="sub-pane" id="sub-iaas">
+              <a onclick="openService('view-iaas')">Infrastructure As A Service (IAAS)</a>
+            </div>
+
+            <div class="sub-pane" id="sub-surveillance">
+              <a onclick="openService('view-cctv')">CCTV</a>
+              <a onclick="openService('view-accesscontrol')">Access Control</a>
+              <a onclick="openService('view-timeattendance')">Time & Attendance</a>
+              <a onclick="openService('view-cctvmanaged')">CCTV as Managed Service</a>
+              <a onclick="openService('view-attendancemanaged')">Attendance as Managed Service</a>
+            </div>
+
+            <div class="sub-pane" id="sub-av">
+              <a onclick="openService('view-av')">Board Room Automation</a>
+              <a onclick="openService('view-av')">Digital Signage</a>
+              <a onclick="openService('view-av')">Audio Solutions</a>
+              <a onclick="openService('view-av')">Video Conferencing</a>
+            </div>
+
+            <div class="sub-pane" id="sub-software">
+              <a onclick="openService('view-softwarelic')">Software Licensing</a>
+              <a onclick="openService('view-itsm')">ITSM Tool</a>
+              <a onclick="openService('view-cloudsolutions')">Cloud Solutions & Services</a>
+            </div>
+          </div>
+
+          <div class="main-cat-column">
+            <!--  AI & AUTOMATION CATEGORY ROW -->
+            <div class="cat-row active" onmouseover="hoverCat('sub-ai', this)" style="color:var(--brand-green);"> AI & Automation <span class="cat-arrow">›</span></div>
+            <div class="cat-row" onmouseover="hoverCat('sub-infra', this)">IT Infra <span class="cat-arrow">›</span></div>
+            <div class="cat-row" onmouseover="hoverCat('sub-services', this)">IT Services <span class="cat-arrow">›</span></div>
+            <div class="cat-row" onmouseover="hoverCat('sub-system', this)">System Integration & Projects <span class="cat-arrow">›</span></div>
+            <div class="cat-row" onmouseover="hoverCat('sub-security', this)">Security <span class="cat-arrow">›</span></div>
+            <div class="cat-row" onmouseover="hoverCat('sub-iaas', this)">IAAS & Rentals <span class="cat-arrow">›</span></div>
+            <div class="cat-row" onmouseover="hoverCat('sub-surveillance', this)">Surveillance & Attendance <span class="cat-arrow">›</span></div>
+            <div class="cat-row" onmouseover="hoverCat('sub-av', this)">Audio & Video <span class="cat-arrow">›</span></div>
+            <div class="cat-row" onmouseover="hoverCat('sub-software', this)">Software & Cloud <span class="cat-arrow">›</span></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="nav-contact-pill" onclick="showView('view-contact')">CONTACT</button>
+    </nav>
+  </header>
+
+  <!-- HOME VIEW -->
+  <main id="view-home" class="view-panel active">
+    <section class="skyline-hero" id="heroBanner">
+      <div class="hero-slider-arrow arrow-left" onclick="changeSlide(-1)">‹</div>
+      <div class="hero-slider-arrow arrow-right" onclick="changeSlide(1)">›</div>
+
+      <h1 id="heroTitle">Best IT Services and<br>Solution Provider in India</h1>
+      
+      <div class="hero-btn-group">
+        <button onclick="showView('view-contact')" class="btn-red">Contact Us</button>
+        <button onclick="openService('view-ai-enterprise')" class="btn-green">Explore AI Solutions</button>
+      </div>
+    </section>
+
+    <section class="trusted-heading-bar">
+      <h2>Trusted by Businesses across India and the Middle East</h2>
+    </section>
+
+    <section class="home-stats-bar">
+      <div class="stat-card">
+        <h3>30+</h3>
+        <p>Years of Expertise</p>
+      </div>
+      <div class="stat-card">
+        <h3>1,000+</h3>
+        <p>Customer</p>
+      </div>
+      <div class="stat-card">
+        <h3>800+</h3>
+        <p>Employees</p>
+      </div>
+      <div class="stat-card">
+        <h3>250+</h3>
+        <p>Location Support</p>
+      </div>
+    </section>
+
+    <section class="sbu-wrap">
+      <h2 class="sbu-title">Our Strategic Business Units</h2>
+
+      <div class="sbu-grid">
+        <div class="sbu-card" onclick="openService('view-ai-enterprise')" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80'); border-bottom-color: var(--brand-green);">
+          <h4> AI &<br>Automation</h4>
+        </div>
+        <div class="sbu-card" onclick="openService('view-datacenter')" style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80');">
+          <h4>IT<br>Infrastructure</h4>
+        </div>
+        <div class="sbu-card" onclick="openService('view-staffing')" style="background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80');">
+          <h4>IT Services</h4>
+        </div>
+        <div class="sbu-card" onclick="openService('view-itsecurity')" style="background-image: url('https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80');">
+          <h4>IT Security</h4>
+        </div>
+        <div class="sbu-card" onclick="openService('view-iaas')" style="background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80');">
+          <h4>IAAS & Rental</h4>
+        </div>
+        <div class="sbu-card" onclick="openService('view-turnkey')" style="background-image: url('https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80');">
+          <h4>System<br>Integration &<br>Projects</h4>
+        </div>
+        <div class="sbu-card" onclick="openService('view-cctv')" style="background-image: url('https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=600&q=80');">
+          <h4>CCTV , Access<br>Control &<br>Attendance</h4>
+        </div>
+        <div class="sbu-card" onclick="openService('view-cloudsolutions')" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80');">
+          <h4>Software &<br>Cloud</h4>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 0A. ENTERPRISE AI & AUTOMATION -->
+  <main id="view-ai-enterprise" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1500&q=80');">
+      <h1>ENTERPRISE ARTIFICIAL INTELLIGENCE & WORKFLOW AUTOMATION</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80" alt="Enterprise AI"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Supercharge Corporate Performance with Next-Gen Enterprise AI</h2>
+          <div class="service-subtitle">Custom Machine Learning, RPA Workflow Automation & Air-Gapped Private Models</div>
+          <p class="service-p">Bring modern artificial intelligence directly into your daily enterprise workflow. InfraVian develops, integrates, and hosts cutting-edge AI architectures—from predictive server diagnostics and automated computer vision to intelligent enterprise assistants that slash operational costs.</p>
+          <ul class="tech-pill-grid">
+            <li>End-to-End Enterprise RPA Workflow Automation</li>
+            <li>Custom Private AI Models Deployed on Dedicated Infrastructure</li>
+            <li>Zero-Data-Leakage Confidential AI Pipelines</li>
+            <li>Integration with ERP, CRM & Supply Chain Databases</li>
+            <li>Automated Document Parsing & Intelligent Invoice OCR</li>
+            <li>Dedicated On-Premise GPU Cluster Hosting & Maintenance</li>
+          </ul>
+          <button onclick="openModal('Enterprise AI & Automation')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 0B. AIOPS & SMART IT OPERATIONS -->
+  <main id="view-ai-aiops" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1500&q=80');">
+      <h1>AIOPS: PREDICTIVE & SELF-HEALING IT INFRASTRUCTURE</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="AIOps"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Zero-Downtime Autonomous IT Operations Powered by Machine Learning</h2>
+          <div class="service-subtitle">Predictive Anomaly Detection, Automated Root-Cause Analysis & Self-Healing Telemetry</div>
+          <p class="service-p">Prevent server crashes and network outages before end-users notice. InfraVian’s AIOps engine continuously correlates millions of telemetry events, predicts hardware failures days in advance, and automatically triggers self-healing scripts.</p>
+          <ul class="tech-pill-grid">
+            <li>Machine Learning Telemetry Log Correlation</li>
+            <li>Predictive Hard Disk & Server Component Failure Alerts</li>
+            <li>Automated Self-Healing Script Execution for Service Hangs</li>
+            <li>Network Bottleneck & Packet Drop Forecasting</li>
+            <li>Dynamic Resource Allocation for Cloud & VM Workloads</li>
+            <li>Instant RCA Generation Integrated with Corporate ITSM</li>
+          </ul>
+          <button onclick="openModal('AIOps & Smart IT')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 0C. AI VIDEO ANALYTICS -->
+  <main id="view-ai-vision" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=1500&q=80');">
+      <h1>AI COMPUTER VISION & INTELLIGENT VIDEO ANALYTICS</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" alt="AI Vision"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Transform Passive Security Cameras into Proactive Real-Time Eyes</h2>
+          <div class="service-subtitle">Edge AI Object Recognition, ANPR, Heatmaps & Factory Safety Compliance</div>
+          <p class="service-p">Upgrade existing CCTV feeds into intelligent computer vision streams. We deploy neural network analytics for automatic helmet/vest detection on factory floors, perimeter intrusion alarms, license plate recognition, and retail footfall heatmaps.</p>
+          <ul class="tech-pill-grid">
+            <li>Factory PPE Safety Detection (Helmet, Vest & Mask Verification)</li>
+            <li>Automatic Number Plate Recognition (ANPR) Gate Integration</li>
+            <li>Virtual Tripwire & Human vs Vehicle Classification</li>
+            <li>Facial Recognition Terminals with Sub-Second Anti-Spoofing</li>
+            <li>Crowd Density & Dwell-Time Heatmap Analytics</li>
+            <li>Real-Time Telegram, SMS & Control Room Alarm Triggers</li>
+          </ul>
+          <button onclick="openModal('AI Video Analytics')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 0D. CUSTOM AI ASSISTANT & LLM INTEGRATION -->
+  <main id="view-ai-llm" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1500&q=80');">
+      <h1>ENTERPRISE PRIVATE LLM & CONVERSATIONAL ASSISTANTS</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80" alt="AI LLM"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Custom Knowledge-Base AI Assistants Trained on Your Company's Data</h2>
+          <div class="service-subtitle">Secure Retrieval-Augmented Generation (RAG), Speech Bots & 24/7 Virtual Helpdesk</div>
+          <p class="service-p">Enable employees and customers to query complex enterprise manuals, technical blueprints, and databases in plain English or Hindi. InfraVian builds private, air-gapped conversational AI agents with zero risk of proprietary data exposure.</p>
+          <ul class="tech-pill-grid">
+            <li>Private Knowledge RAG Bots Trained on Company SOPs & PDFs</li>
+            <li>Voice AI Agents with Real-Time Speech Recognition & Synthesis</li>
+            <li>Multi-Channel Integration (Website, WhatsApp, Slack & Teams)</li>
+            <li>Automated Level-1 Customer Service Ticket Resolution</li>
+            <li>Role-Based Document Access & Cryptographic Privacy Seals</li>
+            <li>Complete On-Premise GPU or Secure Cloud LLM Deployment</li>
+          </ul>
+          <button onclick="openModal('Custom AI LLM Assistant')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 1. ENDPOINTS -->
+  <main id="view-endpoint" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1500&q=80');">
+      <h1>ENTERPRISE ENDPOINT HARDWARE & FLEET ROLLOUT</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=800&q=80" alt="Endpoints"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Equip Your Enterprise with Standardized Endpoint Fleets</h2>
+          <div class="service-subtitle">Tier-1 Commercial Laptops, Desktops, High-End CAD Workstations & Mini PCs</div>
+          <p class="service-p">Stop struggling with unstandardized hardware failures and long procurement waiting periods. InfraVian delivers configured, enterprise-grade endpoints with unified OS image pushing, domain enrollment, and official onsite vendor warranties across India.</p>
+          <ul class="tech-pill-grid">
+            <li>Dell OptiPlex & Latitude Commercial Fleet</li>
+            <li>HP ProBook, EliteBook & Z-Workstations</li>
+            <li>Lenovo ThinkPad & ThinkCentre Fleet</li>
+            <li>Apple MacBook Pro & Air Enterprise Enrollments</li>
+            <li>Zero-Touch Windows Autopilot & Intune Pushing</li>
+            <li>Encrypted Disk-to-Disk Data Migration</li>
+          </ul>
+          <button onclick="openModal('Endpoint Fleet')" class="btn-red">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 2. DATA CENTER -->
+  <main id="view-datacenter" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1500&q=80');">
+      <h1>MISSION CRITICAL DATA CENTER & NEXT-GEN HCI INFRASTRUCTURE</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80" alt="Data Center"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Architect Resilient 99.999% SLA High-Availability Clusters</h2>
+          <div class="service-subtitle">Hyper-Converged Infrastructure (HCI), All-Flash SAN Storage & Server Virtualization</div>
+          <p class="service-p">Keep enterprise databases, ERP, and mission-critical applications running without interruptions. InfraVian designs, builds, and maintains scalable data center compute nodes with active-active clustering, high-density server racks, and automated failovers.</p>
+          <ul class="tech-pill-grid">
+            <li>Nutanix & VMware vSAN Enterprise Clusters</li>
+            <li>Dell PowerEdge & HPE ProLiant Rack Compute</li>
+            <li>NVMe All-Flash SAN & High-Capacity NAS Arrays</li>
+            <li>Active-Active Disaster Recovery Sites</li>
+            <li>Precision Cooling & Dual-Bus PDU Redundancy</li>
+            <li>Zero-Downtime Live Workload Hypervisor Migration</li>
+          </ul>
+          <button onclick="openModal('Data Center Architecture')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 3. NETWORKING & WIFI -->
+  <main id="view-networking" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1500&q=80');">
+      <h1>ENTERPRISE ACTIVE SWITCHING, 10G FIBER & HIGH-DENSITY WI-FI 6/7</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=800&q=80" alt="Networking"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Engineered for Zero Packet Drop & Blazing Speed</h2>
+          <div class="service-subtitle">Core Switching, Structured Optical Cabling, SD-WAN & High-Density Campus Wi-Fi</div>
+          <p class="service-p">Network latency and random Wi-Fi drops directly damage business revenue. InfraVian builds rock-solid network fabrics with Layer 3 core routing, certified fiber optic backbones, dynamic SD-WAN pathing, and intelligent campus roaming.</p>
+          <ul class="tech-pill-grid">
+            <li>Cisco Catalyst & Aruba Multi-Gigabit Switches</li>
+            <li>Fluke-Certified Cat6A & Single/Multi-Mode Optical Fiber</li>
+            <li>Wi-Fi 6 & 7 High-Density Cloud-Managed Access Points</li>
+            <li>Dynamic SD-WAN Combining MPLS, Broadband & 5G</li>
+            <li>VLAN Security Segmentation & Isolated Guest Portals</li>
+            <li>Redundant Core Switch Stacking & Link Aggregation</li>
+          </ul>
+          <button onclick="openModal('Enterprise Networking')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 4. BACKUP & DISASTER RECOVERY -->
+  <main id="view-backup" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1500&q=80');">
+      <h1>IMMUTABLE BACKUP & DISASTER RECOVERY ORCHESTRATION</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80" alt="Backup"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">100% Recovery Guarantee Against Ransomware & Disasters</h2>
+          <div class="service-subtitle">WORM Immutable Cloud Vaults, Bare-Metal Clones & Instant Failover (Sub-15 Min RTO)</div>
+          <p class="service-p">A single ransomware attack or disk crash can destroy years of corporate data. InfraVian builds multi-layered 3-2-1-1 backup architectures with write-once immutable storage and automated standby virtual machines that spin up in minutes.</p>
+          <ul class="tech-pill-grid">
+            <li>Immutable WORM Storage Vaults (Anti-Ransomware)</li>
+            <li>Sub-15 Minute RTO & RPO for Database Workloads</li>
+            <li>Automated Veeam & Cloud Bare-Metal Disaster Recovery</li>
+            <li>Military-Grade AES-256 In-Transit & At-Rest Encryption</li>
+            <li>Continuous Health Audits & Non-Disruptive DR Drills</li>
+            <li>Granular Item-Level Recovery for Microsoft 365 & SQL</li>
+          </ul>
+          <button onclick="openModal('Backup & Disaster Recovery')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 5. LOAD BALANCERS & WAN -->
+  <main id="view-loadbalancer" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1500&q=80');">
+      <h1>L4-L7 APPLICATION DELIVERY CONTROLLERS & WAN OPTIMIZATION</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" alt="Load Balancer"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">High-Availability Traffic Distribution & WAN Acceleration</h2>
+          <div class="service-subtitle">Application Delivery Controllers (ADC), Global Server Load Balancing & Multi-Link Optimization</div>
+          <p class="service-p">Protect high-traffic enterprise portals and core business applications from load crashes. InfraVian configures intelligent L4-L7 Application Delivery Controllers that distribute connections, offload SSL encryption, and reduce wide-area bandwidth bottlenecks.</p>
+          <ul class="tech-pill-grid">
+            <li>L4-L7 Round-Robin, Least-Connection & IP-Hash Balancing</li>
+            <li>SSL/TLS Hardware Offloading Preserving Backend CPU</li>
+            <li>Global Server Load Balancing (GSLB) with Multi-Geo Routing</li>
+            <li>WAN Data Deduplication & Packet Compression</li>
+            <li>Dynamic DDoS Rate Limiting at Application Layer</li>
+            <li>Proactive Backend Health Checks & Seamless Draining</li>
+          </ul>
+          <button onclick="openModal('Load Balancer Solutions')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 6. IT STAFFING SERVICES -->
+  <main id="view-staffing" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1500&q=80');">
+      <h1>GET THE BEST CERTIFIED IT TALENT UNDER ONE ROOF</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" alt="IT Staffing"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Upscale and Up-Skill Your Enterprise with Our Staff Augmentation</h2>
+          <div class="service-subtitle">Vetted Engineering Talent Ready for Immediate Onboarding Across India</div>
+          <p class="service-p">Looking for an extended arm to augment your existing team as per evolving project deadlines? InfraVian provides pre-evaluated, certified engineering professionals and managed technical pods to scale your technology teams quickly in minimal time, fulfilling your unique requirements with 100% peace of mind.</p>
+          <ul class="tech-pill-grid">
+            <li>L1/L2/L3 Desktop & Helpdesk Engineers</li>
+            <li>Certified Cisco & FortiGate Network Engineers</li>
+            <li>Linux, Windows & Active Directory Server Admins</li>
+            <li>AWS, Azure & Google Cloud Architects</li>
+            <li>DevOps, CI/CD & Kubernetes Engineers</li>
+            <li>Cybersecurity, SOC & VAPT Specialists</li>
+          </ul>
+          <button onclick="openModal('IT Staffing Services')" class="btn-red">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 7. ON-DEMAND SERVICES -->
+  <main id="view-ondemand" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=1500&q=80');">
+      <h1>ON-DEMAND IT SUPPORT, EMERGENCY DISPATCH & BREAK-FIX</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=800&q=80" alt="On Demand"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Guaranteed On-Site Technical Intervention When Disasters Hit</h2>
+          <div class="service-subtitle">Fast 2-to-4 Hour Engineer Dispatch Across Major Cities in India</div>
+          <p class="service-p">Avoid bloated monthly support retainers for branch locations. InfraVian provides on-demand L1/L2/L3 engineering dispatch for sudden hardware failures, network crashes, server boots, and urgent patch deployment with strictly enforced resolution SLAs.</p>
+          <ul class="tech-pill-grid">
+            <li>Guaranteed 2-to-4 Hour Metro Onsite Dispatch</li>
+            <li>Emergency Server Boot Recovery & Hardware Swaps</li>
+            <li>On-Ground Physical IT Asset Inventory & Serial Tagging</li>
+            <li>Branch Switch, Router & Firewall Break-Fix</li>
+            <li>Ad-Hoc Security Vulnerability Patch Rollouts</li>
+            <li>No Long-Term Contracts Required (Pay-As-You-Use)</li>
+          </ul>
+          <button onclick="openModal('On-Demand Emergency IT')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 8. IT AUDIT SERVICES -->
+  <main id="view-audit" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1500&q=80');">
+      <h1>COMPREHENSIVE IT AUDIT, HYGIENE & REGULATORY COMPLIANCE</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80" alt="IT Audit"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Gain Complete Visibility into Security, Hygiene & Compliance</h2>
+          <div class="service-subtitle">Infrastructure Audits, Software License Reviews & Regulatory Compliance Readiness</div>
+          <p class="service-p">Unmonitored systems and unlicensed software create huge financial and regulatory liabilities. InfraVian conducts comprehensive technical audits across your compute, network, access control, and software licensing layers to identify bottlenecks and keep your business audit-ready.</p>
+          <ul class="tech-pill-grid">
+            <li>Infrastructure Performance & Capacity Audits</li>
+            <li>Genuine Software Licensing Verification (Microsoft/Adobe)</li>
+            <li>Active Directory Permission & Privilege Hygiene Reviews</li>
+            <li>Network Bottleneck & Switching Loop Analysis</li>
+            <li>Compliance Readiness for ISO 27001, RBI & HIPAA</li>
+            <li>Executive Scorecards with Step-by-Step Fix Roadmaps</li>
+          </ul>
+          <button onclick="openModal('IT Audit Services')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 9. CCTV AMC -->
+  <main id="view-cctvamc" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=1500&q=80');">
+      <h1>PREVENTIVE SURVEILLANCE MAINTENANCE & CCTV AMC CONTRACTS</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=800&q=80" alt="CCTV AMC"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Continuous Surveillance Uptime & Camera Hardware Health</h2>
+          <div class="service-subtitle">Comprehensive Annual Maintenance Contracts (AMC) for IP Cameras, NVRs & Storage</div>
+          <p class="service-p">Protect your premises 24/7 with proactive maintenance contracts for IP cameras, NVR/DVR storage servers, PoE switches, optical fibers, and video analytics systems across corporate campuses and factories.</p>
+          <ul class="tech-pill-grid">
+            <li>Scheduled Preventive Optical Lens Cleaning & Focusing</li>
+            <li>NVR/DVR Hard Disk Sector & Recording Loop Verification</li>
+            <li>PoE Switch Power Balancing & Industrial Surge Protection</li>
+            <li>Free Standby Replacement Cameras During Repair Cycles</li>
+            <li>Camera Firmware Patching & Cyber Hardening</li>
+            <li>Guaranteed 4-Hour On-Site Breakdown Resolution SLA</li>
+          </ul>
+          <button onclick="openModal('CCTV AMC Services')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 10. CLOUD SERVICES -->
+  <main id="view-cloudservices" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1500&q=80');">
+      <h1>ENTERPRISE CLOUD ARCHITECTURE, MIGRATION & COST GOVERNANCE</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" alt="Cloud"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Harness Multi-Cloud Elasticity with FinOps Cost Control</h2>
+          <div class="service-subtitle">Amazon Web Services (AWS), Microsoft Azure & Google Cloud Platform (GCP)</div>
+          <p class="service-p">Accelerate enterprise innovation without uncontrollable cloud invoices. InfraVian designs secure hybrid cloud architectures, executes zero-data-loss workload migrations, and delivers continuous 24/7 cost governance.</p>
+          <ul class="tech-pill-grid">
+            <li>Zero-Data-Loss Application & Database Migration</li>
+            <li>FinOps Cost Optimization (Rightsizing & Reserved Pricing)</li>
+            <li>Hybrid Cloud ExpressRoute & DirectConnect VPN Tunnels</li>
+            <li>Containerized Kubernetes & Microservices Architecture</li>
+            <li>Automated Cloud Backup & Multi-Region Geo-Disaster Recovery</li>
+            <li>24/7 Cloud NOC Monitoring & Auto-Scaling Orchestration</li>
+          </ul>
+          <button onclick="openModal('Cloud Consulting')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 11. DATA CENTER MANAGEMENT -->
+  <main id="view-dcmanage" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1500&q=80');">
+      <h1>COMPLETE DATA CENTER OPERATIONS & FACILITY MANAGEMENT</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80" alt="DC Management"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Round-the-Clock On-Premise & Co-Location Administration</h2>
+          <div class="service-subtitle">Facility Thermal, Power, Hypervisor, SAN Storage & Server Cluster Management</div>
+          <p class="service-p">Managing an enterprise data center requires continuous vigilance across physical and virtual layers. InfraVian delivers end-to-end management covering rack thermal limits, dual-bus power telemetry, server OS patching, and SAN volume allocations.</p>
+          <ul class="tech-pill-grid">
+            <li>Red Hat Enterprise Linux, Windows Server & VMware ESXi Admin</li>
+            <li>SAN Storage LUN Provisioning, Zoning & Volume Replication</li>
+            <li>HVAC Cooling, Rack PDU Load Balancing & UPS Telemetry</li>
+            <li>Hardware Break-Fix, Motherboard Swaps & RAID Rebuilds</li>
+            <li>24/7 Level-1/Level-2 Incident Helpdesk & Root Cause Analysis</li>
+            <li>Strict Physical Security & Data Center Access Governance</li>
+          </ul>
+          <button onclick="openModal('Data Center Operations')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 12. RIMS -->
+  <main id="view-rims" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=1500&q=80');">
+      <h1>CENTRALIZED NOC REMOTE INFRASTRUCTURE MANAGEMENT (RIMS)</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80" alt="RIMS"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Centralized Remote Monitoring Across All Corporate Branches</h2>
+          <div class="service-subtitle">24/7 Network Operations Center (NOC) Telemetry, Patching & Fault Isolation</div>
+          <p class="service-p">Eliminate the heavy cost of stationing dedicated IT staff at every regional office. InfraVian’s 24/7 Network Operations Center remotely manages, monitors, and optimizes your distributed servers, firewalls, and endpoints across India.</p>
+          <ul class="tech-pill-grid">
+            <li>24/7 Automated Threshold & Latency Monitoring</li>
+            <li>Centralized Silent Firmware & OS Patch Deployments</li>
+            <li>Automated Root-Cause Diagnostic & Incident Ticketing</li>
+            <li>Real-Time Software Inventory & License Tracking</li>
+            <li>Bandwidth Telemetry & Network Jitter Alerts</li>
+            <li>Guaranteed MTTR SLA Commitments Across All Tiers</li>
+          </ul>
+          <button onclick="openModal('RIMS Services')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 13. NEW OFFICE IT SETUP -->
+  <main id="view-newoffice" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1500&q=80');">
+      <h1>TURNKEY CORPORATE NEW OFFICE IT SETUP & HANDOVER</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80" alt="New Office"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">End-to-End Technology Handover for New Corporate Spaces</h2>
+          <div class="service-subtitle">Structured Cabling, Server Rooms, Workstations, Firewalls & Boardrooms</div>
+          <p class="service-p">Moving into a new office shouldn't be stressful. InfraVian assumes full responsibility—coordinating with interior architects, installing structured Cat6A/fiber lines, staging server racks, and configuring workstations so everything works from day one.</p>
+          <ul class="tech-pill-grid">
+            <li>Architectural Conduit & Floor Trench Planning</li>
+            <li>Certified Cat6A Structured Cabling & Patch Panels</li>
+            <li>Server Room Construction with Racks, UPS & Access Control</li>
+            <li>Firewall, Core Switch & Campus Wi-Fi 6 Setup</li>
+            <li>Bulk Employee Laptops, Desktops & Displays Staged</li>
+            <li>Boardroom 4K Video Conferencing & Audio Integration</li>
+          </ul>
+          <button onclick="openModal('New Office IT Setup')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 14. TURNKEY PROJECTS -->
+  <main id="view-turnkey" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1500&q=80');">
+      <h1>LARGE-SCALE MISSION CRITICAL TURNKEY IT PROJECTS</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80" alt="Turnkey"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">High-Stakes Technical Execution for Complex Facilities</h2>
+          <div class="service-subtitle">5-Star Hotels, Multi-Specialty Hospitals, University Campuses & Industrial Plants</div>
+          <p class="service-p">We execute large-scale, multi-crore infrastructure projects requiring flawless technical precision. From hospital EHR servers and PACS networks to campus-wide optical rings and hotel smart-room technology, InfraVian delivers turnkey excellence.</p>
+          <ul class="tech-pill-grid">
+            <li>Hospital Server Networks with Fault-Tolerant PACS/EHR Storage</li>
+            <li>Hospitality High-Density Wi-Fi, IP-PBX & Guest Isolation</li>
+            <li>University Campus Gigabit Optical Backbone Networks</li>
+            <li>Industrial Ruggedized Switching & Factory Surveillance</li>
+            <li>End-to-End Procurement, Engineering & Project Governance</li>
+            <li>Rigorous Handover Documentation & SLA Maintenance</li>
+          </ul>
+          <button onclick="openModal('Turnkey Projects')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 15. VAPT SERVICES -->
+  <main id="view-vapt" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1500&q=80');">
+      <h1>ADVANCED VULNERABILITY ASSESSMENT & PENETRATION TESTING</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80" alt="VAPT"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Simulate Real Cyberattacks Before Malicious Hackers Do</h2>
+          <div class="service-subtitle">Web Applications, APIs, Mobile Apps, Cloud Environments & Internal Networks</div>
+          <p class="service-p">Cyber threats evolve daily. InfraVian’s certified ethical hackers test your digital perimeter using advanced automated tools and deep manual exploitation to uncover zero-days, misconfigurations, and authentication loopholes before they lead to costly breaches.</p>
+          <ul class="tech-pill-grid">
+            <li>OWASP Top 10 Web Application Penetration Testing</li>
+            <li>REST API & Mobile Application (Android/iOS) Security Audits</li>
+            <li>External Perimeter & Internal Network Pivot Testing</li>
+            <li>Cloud Security Posture Assessment (AWS / Azure)</li>
+            <li>Active Directory Privilege Escalation Simulation</li>
+            <li>Executive Proof Reports with Step-by-Step Code Remediation</li>
+          </ul>
+          <button onclick="openModal('VAPT Security Audit')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 16. IT SECURITY SERVICES -->
+  <main id="view-itsecurity" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1500&q=80');">
+      <h1>NEXT-GEN FIREWALLS, ZERO-TRUST & ENDPOINT DEFENSE (EDR)</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80" alt="Security"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Multi-Layered Cyber Defense for Your Data & Network</h2>
+          <div class="service-subtitle">Next-Gen Firewalls (NGFW), Endpoint Detection & Response (EDR) & DLP</div>
+          <p class="service-p">Traditional antivirus and basic firewalls can't stop modern automated threats. InfraVian builds a layered zero-trust security architecture combining deep packet inspection firewalls, AI endpoint behavioral isolation, and data loss prevention.</p>
+          <ul class="tech-pill-grid">
+            <li>FortiGate & Cisco Next-Gen Firewalls with Deep Inspection</li>
+            <li>Endpoint Detection & Response (EDR) Isolating Ransomware</li>
+            <li>Data Loss Prevention (DLP) Blocking Data Leakage</li>
+            <li>Zero Trust Network Access (ZTNA) & Adaptive Multi-Factor Auth</li>
+            <li>Secure SSL-VPN & IPsec Site-to-Site Encrypted Tunnels</li>
+            <li>Continuous 24/7 Threat Intelligence & Incident Response</li>
+          </ul>
+          <button onclick="openModal('IT Security Architecture')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 17. IAAS & RENTALS -->
+  <main id="view-iaas" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1500&q=80');">
+      <h1>INFRASTRUCTURE AS A SERVICE (IAAS) & ENTERPRISE IT RENTALS</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" alt="IAAS"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Convert Heavy Capital Expenditure into Flexible Operating Expenses</h2>
+          <div class="service-subtitle">Bulk Business Laptops, Dedicated Rack Servers, Firewalls & Network Rentals</div>
+          <p class="service-p">Don't tie up critical working capital in depreciating hardware assets. InfraVian provides high-configuration enterprise laptops, servers, switches, and firewalls on flexible monthly and annual subscriptions with complete onsite maintenance included.</p>
+          <ul class="tech-pill-grid">
+            <li>Bulk Commercial Laptops (Core i5/i7, 16GB/32GB RAM, SSD)</li>
+            <li>Enterprise Rack Servers for Virtualization & Databases</li>
+            <li>Managed FortiGate & Cisco Firewalls on Subscription</li>
+            <li>Flexible 3-Month, 1-Year & 3-Year Rental Contracts</li>
+            <li>Automatic Hardware Refreshes Every 2 to 3 Years</li>
+            <li>Free On-Site Component Swaps & Maintenance Support</li>
+          </ul>
+          <button onclick="openModal('IAAS & Hardware Rentals')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 18. CCTV & SURVEILLANCE -->
+  <main id="view-cctv" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=1500&q=80');">
+      <h1>AI-POWERED IP VIDEO SURVEILLANCE & PERIMETER MONITORING</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=800&q=80" alt="CCTV"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">High-Definition Security Optics Backed by Edge AI Analytics</h2>
+          <div class="service-subtitle">4K Dome, Bullet, 360° PTZ Tracking Cameras & Scalable NVR Arrays</div>
+          <p class="service-p">Traditional analog surveillance is obsolete. InfraVian installs enterprise IP surveillance systems featuring night-vision optics, virtual tripwires, human/vehicle classification, license plate recognition (ANPR), and encrypted live feeds accessible securely on mobile devices.</p>
+          <ul class="tech-pill-grid">
+            <li>4K Ultra-HD Vandal-Proof Dome & Weatherproof Bullet Cameras</li>
+            <li>360° Pan-Tilt-Zoom (PTZ) Optical Auto-Tracking Cameras</li>
+            <li>Edge AI Human & Vehicle Motion Classification</li>
+            <li>License Plate Recognition (ANPR) & Facial Detection</li>
+            <li>High-Capacity RAID-Protected NVR Storage Servers</li>
+            <li>Encrypted Smartphone App Live-Streaming & Playback</li>
+          </ul>
+          <button onclick="openModal('CCTV Surveillance')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 19. ACCESS CONTROL -->
+  <main id="view-accesscontrol" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1500&q=80');">
+      <h1>TOUCHLESS BIOMETRIC & RFID ACCESS CONTROL ARCHITECTURES</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80" alt="Access Control"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Secure Your Facilities with Multi-Factor Physical Authentication</h2>
+          <div class="service-subtitle">Face Recognition, Fingerprint Terminals, Smart Cards & Turnstiles</div>
+          <p class="service-p">Protect server rooms, executive offices, and production areas from unauthorized entry. InfraVian deploys sub-second touchless facial recognition terminals, encrypted RFID smart card readers, electromagnetic locks, and turnstiles with centralized access governance.</p>
+          <ul class="tech-pill-grid">
+            <li>Sub-0.2s Touchless Facial Recognition with Anti-Spoofing</li>
+            <li>Optical & Capacitive Fingerprint Biometric Scanners</li>
+            <li>Encrypted 13.56MHz Mifare / Desfire RFID Smart Cards</li>
+            <li>Server Room 2-Factor Authentication (Card + Biometric)</li>
+            <li>Emergency Fire Alarm Integration for Instant Door Release</li>
+            <li>Centralized Access Control Dashboards with Real-Time Audit Logs</li>
+          </ul>
+          <button onclick="openModal('Access Control Systems')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 20. TIME & ATTENDANCE -->
+  <main id="view-timeattendance" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1500&q=80');">
+      <h1>MULTI-LOCATION TIME & ATTENDANCE AUTOMATION</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80" alt="Attendance"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Automate Employee Punch-Ins & Streamline Monthly Payroll</h2>
+          <div class="service-subtitle">Biometric Clocks, Geo-Fenced Mobile App & Direct Payroll/HRMS Sync</div>
+          <p class="service-p">Eliminate manual attendance tracking, ghost workers, and buddy punching. InfraVian installs enterprise biometric attendance terminals and cloud software that automatically calculates shifts, overtime, late-marks, and leaves—exporting clean, audit-ready data straight into payroll.</p>
+          <ul class="tech-pill-grid">
+            <li>Zero Buddy-Punching Biometric Fingerprint & Face Terminals</li>
+            <li>GPS Geo-Fenced Mobile Check-Ins for Field Sales Reps</li>
+            <li>Direct Sync with SAP, GreytHR, Zoho People & Custom ERPs</li>
+            <li>Rotational Shift, Break Hours & Overtime Calculation Engines</li>
+            <li>Consolidated Multi-Branch Head-Office Dashboard</li>
+            <li>Automated Late-Coming & Leave Regularization Workflows</li>
+          </ul>
+          <button onclick="openModal('Time & Attendance Automation')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 21. CCTV AS MANAGED SERVICE -->
+  <main id="view-cctvmanaged" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=1500&q=80');">
+      <h1>SURVEILLANCE AS A SERVICE (VSaaS) & CLOUD STORAGE</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=800&q=80" alt="Managed CCTV"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">100% Surveillance Coverage Delivered on Subscription</h2>
+          <div class="service-subtitle">Zero Hardware Purchase Cost, Cloud Footage Vault & 24/7 Health Monitoring</div>
+          <p class="service-p">Stop spending lakhs on cameras that stop working without notice. InfraVian provides camera hardware, cabling, switches, local NVRs, and cloud footage backup under a simple, predictable monthly operating subscription with lifetime hardware replacement.</p>
+          <ul class="tech-pill-grid">
+            <li>Zero Upfront Capital Investment on Cameras & Racks</li>
+            <li>Latest IP Cameras & PoE Switches Deployed Free of Cost</li>
+            <li>24/7 Automated Camera Health & Uptime Diagnostics</li>
+            <li>Encrypted Off-Site Cloud Video Vault (Anti-Theft Backup)</li>
+            <li>Free Lifetime Replacement for Damaged Equipment</li>
+            <li>Remote SOC Intrusion Monitoring & Instant Alert Triggers</li>
+          </ul>
+          <button onclick="openModal('Managed CCTV Subscription')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 22. ATTENDANCE AS MANAGED SERVICE -->
+  <main id="view-attendancemanaged" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1500&q=80');">
+      <h1>ATTENDANCE AS A MANAGED SERVICE & HR PROCESS OUTSOURCING</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80" alt="Managed Attendance"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Let Us Handle Attendance Logistics from Hardware to Payroll</h2>
+          <div class="service-subtitle">Biometric Scanners Supplied Free, User Enrolments & Verified Timesheets</div>
+          <p class="service-p">Free up your HR team from resolving daily punch errors and managing broken biometric clocks. InfraVian supplies the physical scanners for free, manages employee fingerprint/face enrolments, reconciles missed punches, and delivers payroll-ready muster rolls every month.</p>
+          <ul class="tech-pill-grid">
+            <li>Biometric Face & Fingerprint Scanners Provided Free</li>
+            <li>Employee User Enrolment & Multi-Branch Template Sync</li>
+            <li>Daily Missed Punch Reconciliation & Regularization Handling</li>
+            <li>Monthly Verified Overtime & Attendance Muster Roll Delivery</li>
+            <li>24-Hour Free Hardware Replacement Guarantee</li>
+            <li>Employee Mobile App for Pay Slips, Leaves & Punch Logs</li>
+          </ul>
+          <button onclick="openModal('Managed Attendance Service')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 23. AUDIO & VIDEO SOLUTIONS -->
+  <main id="view-av" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=1500&q=80');">
+      <h1>SMART BOARDROOM AUTOMATION, VIDEO WALLS & 4K CONFERENCING</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=800&q=80" alt="AV"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Modernize Hybrid Collaboration with Intelligent Audiovisual Systems</h2>
+          <div class="service-subtitle">Teams/Zoom Rooms, Motorized Displays, Ceiling Microphones & Digital Signage</div>
+          <p class="service-p">Clunky cables and poor audio ruin executive meetings. InfraVian engineers intelligent boardroom environments featuring one-touch meeting starts, 4K AI speaker-tracking cameras, echo-canceling ceiling beamforming microphones, and interactive displays.</p>
+          <ul class="tech-pill-grid">
+            <li>Certified Microsoft Teams Rooms & Zoom Rooms Hardware</li>
+            <li>4K AI Auto-Framing & Active Speaker-Tracking Video Bars</li>
+            <li>Ceiling Array Beamforming Microphones with Digital Signal Processors</li>
+            <li>One-Touch Room Automation Panels (Lights, Screens, Audio)</li>
+            <li>Commercial Ultra-HD Video Walls & Digital Lobby Signage</li>
+            <li>Wireless Screen Sharing (Barco ClickShare / Apple AirPlay)</li>
+          </ul>
+          <button onclick="openModal('Boardroom AV Solutions')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 24. SOFTWARE LICENSING -->
+  <main id="view-softwarelic" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1500&q=80');">
+      <h1>GENUINE ENTERPRISE SOFTWARE LICENSING & CLOUD SAAS GOVERNANCE</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80" alt="Software Licensing"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Optimize Software Costs & Ensure 100% Publisher Compliance</h2>
+          <div class="service-subtitle">Official Volume Tier Licensing for Microsoft 365, VMware, Red Hat, Adobe & AutoCAD</div>
+          <p class="service-p">Software compliance audits by vendors can bring devastating financial penalties. InfraVian is an authorized licensing partner delivering volume tier discounts, license pool governance, renewal automation, and complete audit protection across all major enterprise software suites.</p>
+          <ul class="tech-pill-grid">
+            <li>Microsoft 365, Office Enterprise & Windows Server CALs</li>
+            <li>VMware by Broadcom vSphere & vCenter Core Licensing</li>
+            <li>Red Hat Enterprise Linux (RHEL) & OpenShift Subscriptions</li>
+            <li>Adobe Creative Cloud Enterprise Multi-Seat Licenses</li>
+            <li>Autodesk AutoCAD, Revit & Engineering Toolsets</li>
+            <li>Oracle Database, WebLogic & MySQL Enterprise Editions</li>
+          </ul>
+          <button onclick="openModal('Software Licensing')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 25. ITSM TOOL -->
+  <main id="view-itsm" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=1500&q=80');">
+      <h1>ENTERPRISE ITIL SERVICE DESK & ASSET LIFECYCLE TOOLS</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80" alt="ITSM"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Empower Internal IT Teams with ITIL-Aligned Service Automation</h2>
+          <div class="service-subtitle">Incident Ticketing, QR Asset Discovery, Change Approvals & Self-Service Portals</div>
+          <p class="service-p">Unstructured email requests and forgotten WhatsApp messages lead to IT chaos. InfraVian configures modern ITSM platforms featuring priority ticket queues, automated assignment rules, hardware asset barcodes, and change management workflows.</p>
+          <ul class="tech-pill-grid">
+            <li>ITIL-Aligned Incident, Problem & Change Management</li>
+            <li>Barcode & QR Code Hardware Asset Tracking Telemetry</li>
+            <li>Intelligent Automated Ticket Priority Routing to Specialists</li>
+            <li>Multi-Level Change Approval Gates for Server Reboots & Patches</li>
+            <li>Employee Self-Service Knowledge Base & Ticket Tracker</li>
+            <li>Real-Time SLA Tracking with MTTR & CSAT Dashboards</li>
+          </ul>
+          <button onclick="openModal('ITSM Tool Solutions')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 26. CLOUD SOLUTIONS & SERVICES -->
+  <main id="view-cloudsolutions" class="view-panel">
+    <div class="service-banner" style="background-image: linear-gradient(rgba(4, 18, 38, 0.9), rgba(4, 18, 38, 0.95)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1500&q=80');">
+      <h1>CUSTOM HYBRID CLOUD ARCHITECTURES & ENTERPRISE HOSTING</h1>
+    </div>
+    <div class="page-section">
+      <div class="service-detail-row">
+        <div class="service-img-col"><img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" alt="Cloud Solutions"></div>
+        <div class="service-text-col">
+          <h2 class="service-h2">Resilient Private Cloud Environments & Business Applications</h2>
+          <div class="service-subtitle">Enterprise Web Hosting, Managed Cloud Databases & Business Email Systems</div>
+          <p class="service-p">Empower your digital products with secure cloud architecture. InfraVian builds high-availability virtual private clouds (VPC), managed relational databases, DDoS-protected web server clusters, and enterprise business email systems on Microsoft 365 Exchange and Google Workspace.</p>
+          <ul class="tech-pill-grid">
+            <li>High-Availability Scalable Web Server Environments</li>
+            <li>DDoS Shielding & Web Application Firewall (WAF) Integration</li>
+            <li>Managed SQL & NoSQL Databases with Geo-Redundant Snapshots</li>
+            <li>Virtual Private Clouds (VPC) with IPsec VPN Tunnels</li>
+            <li>Enterprise Email Deployment (Microsoft 365 & Google Workspace)</li>
+            <li>24/7 Automated Backup & Failover DNS Orchestration</li>
+          </ul>
+          <button onclick="openModal('Cloud Hosting Solutions')" class="btn-green">GET APPOINTMENT</button>
+          <a href="tel:+919793228607" class="direct-call-badge"> Call Us: +91 97932 28607</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- CONTACT US VIEW -->
+  <main id="view-contact" class="view-panel page-section">
+    <h2 style="text-align:center; font-size:1.8rem; margin-bottom:2.5rem; color:var(--heading);">Contact Our Corporate Desk</h2>
+    <div style="display:flex; flex-wrap:wrap; gap:3rem; max-width:1050px; margin:0 auto;">
+      <div style="flex:1 1 320px;">
+        <div style="border:1px solid var(--border); border-left:4px solid var(--brand-green); padding:1.8rem; margin-bottom:1.5rem;">
+          <h4 style="color:var(--primary); margin-bottom:0.5rem;">Head Operations</h4>
+          <p style="font-size:0.9rem; color:#64748b;">InfraVian Technologies Ltd.<br>Navi Mumbai, Maharashtra, India</p>
+        </div>
+        <div style="border:1px solid var(--border); border-left:4px solid var(--accent-red); padding:1.8rem;">
+          <h4 style="color:var(--primary); margin-bottom:0.5rem;">Direct Helpdesk</h4>
+          <p style="font-size:0.9rem; color:#64748b; line-height: 1.8;">
+             <a href="mailto:contact@infravian.in" style="color:#64748b; text-decoration:none;">contact@infravian.in</a><br>
+             <a href="tel:+919793228607" style="color:#64748b; text-decoration:none;">+91 97932 28607</a><br>
+             <a href="https://www.instagram.com/infraviantech?stkn=Y3F5cXFmdGRkMWg5" target="_blank" style="color:var(--brand-blue); font-weight:600; text-decoration:underline;">@infraviantech (Instagram)</a>
+          </p>
+        </div>
+      </div>
+      <div style="flex:1 1 450px; background:var(--bg-light); border:1px solid var(--border); padding:2.2rem; border-radius:4px; border-top: 4px solid var(--brand-green);">
+        <h3 style="margin-bottom:1.2rem; color:var(--heading);">Feel Free to Drop Us a Line</h3>
+        <form action="https://formsubmit.co/contact@infravian.in" method="POST">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="text" name="Company Name" placeholder="Company Name *" style="width:100%; padding:0.75rem; margin-bottom:1rem; border:1px solid #cbd5e1; border-radius:3px;" required>
+          <input type="text" name="Your Name" placeholder="Your Name *" style="width:100%; padding:0.75rem; margin-bottom:1rem; border:1px solid #cbd5e1; border-radius:3px;" required>
+          <input type="tel" name="Contact Number" placeholder="Contact Number *" style="width:100%; padding:0.75rem; margin-bottom:1rem; border:1px solid #cbd5e1; border-radius:3px;" required>
+          <textarea rows="3" name="Requirement" placeholder="Describe your requirement..." style="width:100%; padding:0.75rem; margin-bottom:1.2rem; border:1px solid #cbd5e1; border-radius:3px;" required></textarea>
+          <button type="submit" class="btn-green" style="width:100%; padding:0.85rem; cursor:pointer;">SUBMIT INQUIRY</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- CONSULT BAR -->
+  <div class="consult-bar">
+    <div>
+      <h3>INTERESTED IN A FREE ENTERPRISE CONSULT?</h3>
+      <p>Speak with our lead engineers today to review your project infrastructure blueprints.</p>
+    </div>
+    <button onclick="openModal('Free Consultation')" class="btn-green">CONTACT US</button>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4 style="font-weight:800;">InfraVian Technologies Ltd.</h4>
+        <p>A leading IT service provider in India, developing and implementing Solutions & Services for customers of diverse sectors & sizes.</p>
+        <div style="margin-top: 1.2rem; line-height: 1.9;">
+          <p> Phone: <a href="tel:+919793228607" style="color:#94a3b8; text-decoration:none;">+91 97932 28607</a></p>
+          <p> Email: <a href="mailto:contact@infravian.in" style="color:#94a3b8; text-decoration:none;">contact@infravian.in</a></p>
+          <p> Instagram: <a href="https://www.instagram.com/infraviantech?stkn=Y3F5cXFmdGRkMWg5" target="_blank" style="color:var(--brand-green); text-decoration:none;">@infraviantech</a></p>
+          <p> Navi Mumbai, Maharashtra, India</p>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>SOLUTIONS</h4>
+        <li><a onclick="openService('view-ai-enterprise')" style="color:var(--brand-green);font-weight:bold;"> AI & Automation</a></li>
+        <li><a onclick="openService('view-datacenter')">It infrastructure</a></li>
+        <li><a onclick="openService('view-cloudsolutions')">Software & cloud</a></li>
+        <li><a onclick="openService('view-av')">Audio & video</a></li>
+        <li><a onclick="openService('view-cctv')">Surveillance & attendance</a></li>
+        <li><a onclick="openService('view-itsecurity')">Security</a></li>
+        <li><a onclick="openService('view-turnkey')">System integration & projects</a></li>
+        <li><a href="index.html">Sitemap / Home</a></li>
+      </div>
+
+      <div class="footer-col">
+        <h4>SERVICES</h4>
+        <li><a onclick="openService('view-ai-aiops')">AIOps & Smart Operations</a></li>
+        <li><a onclick="openService('view-datacenter')">Data center</a></li>
+        <li><a onclick="openService('view-networking')">Networking & wifi</a></li>
+        <li><a onclick="openService('view-backup')">Backup & disaster recovery</a></li>
+        <li><a onclick="openService('view-loadbalancer')">Load balancers</a></li>
+        <li><a onclick="openService('view-rims')">Remote infrastructure management</a></li>
+        <li><a onclick="openService('view-dcmanage')">Data center management</a></li>
+        <li><a onclick="openService('view-itsecurity')">It security services</a></li>
+        <li><a onclick="openService('view-cloudservices')">Cloud services</a></li>
+        <li><a onclick="openService('view-audit')">It audit services</a></li>
+        <li><a onclick="openService('view-cctvamc')">CCTV AMC</a></li>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 InfraVian Technologies Ltd. All rights reserved.</div>
+  </footer>
+
+  <!-- FLOATING AI ASSISTANT TRIGGER BUTTON -->
+  <div class="floating-ai-btn" onclick="toggleAIChat()">
+    <span> InfraVian Voice AI</span>
+  </div>
+
+  <!-- FLOATING AI CHAT WIDGET (WITH MIC & AUDIO SPEECH) -->
+  <div class="ai-chat-popup" id="aiChatPopup">
+    <div class="ai-chat-header">
+      <h4> InfraVian Voice AI</h4>
+      <button class="ai-chat-close" onclick="toggleAIChat()">&times;</button>
+    </div>
+    <div class="ai-chat-messages" id="aiMessagesArea">
+      <div class="ai-msg bot-msg">
+        Hello!  I am your live AI Assistant at InfraVian Technologies. You can type or tap the microphone () to talk with me directly!
+      </div>
+    </div>
+    <form class="ai-chat-form" onsubmit="sendAIMessage(event)">
+      <button type="button" class="ai-mic-btn" id="aiMicBtn" onclick="startVoiceRecognition()" title="Speak with AI"></button>
+      <input type="text" id="aiUserInput" placeholder="Speak or type your question..." required>
+      <button type="submit" class="ai-send-btn">Send</button>
+    </form>
+  </div>
+
+  <!-- WHATSAPP FLOATING BUTTON -->
+  <a href="https://wa.me/919793228607?text=Hello%20InfraVian%20Technologies,%20I%20need%20IT%20Support." class="floating-wa-box" target="_blank">
+    <div class="wa-circle"></div>
+  </a>
+
+  <!-- APPOINTMENT MODAL POPUP -->
+  <div class="modal-overlay" id="appointmentModal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+      <form action="https://formsubmit.co/contact@infravian.in" method="POST">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="Service" id="modalServiceField" value="General Appointment">
+        <input type="text" name="Name" placeholder="Your name" required>
+        <input type="email" name="Email" placeholder="Your email" required>
+        <input type="tel" name="Phone" placeholder="Your Phone" required>
+        <textarea rows="4" name="Message" placeholder="Your message (optional)"></textarea>
+        <button type="submit" class="modal-submit-btn">Submit</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>
